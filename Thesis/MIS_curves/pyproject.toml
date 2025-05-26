@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"] 
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MIS_curves"
+version = "0.1.0"
+description = "A short description of your package"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Niclas Brandt", email = "niclasbrandt97@gmail.com" },
+]
+dependencies = [
+  "requests>=2.0",          # example dependencies
+  "numpy>=1.20",
+  "import Rhino",
+  "import Grasshopper.Kernel as gh"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+requires-python = ">=3.7"
+
