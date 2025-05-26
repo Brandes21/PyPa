@@ -1,8 +1,8 @@
 LICENSE.txt
 README.md
 pyproject.toml
-src/Curve_Removal_NB/MIS.py
-src/Curve_Removal_NB/__init__.py
+src/Curve_Removal/MIS_curves.py
+src/Curve_Removal/__init__.py
 src/MIS_curves.egg-info/PKG-INFO
 src/MIS_curves.egg-info/SOURCES.txt
 src/MIS_curves.egg-info/dependency_links.txt

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "MIS_curves"
-version = "0.1.0"
-description = "A short description of your package"
+version = "0.1.1"
+description = "Removes too close curves in Rhino/GH using a graph approach"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
