@@ -13,9 +13,7 @@ authors = [
 ]
 dependencies = [
   "requests>=2.0",          # example dependencies
-  "numpy>=1.20",
-  "import Rhino",
-  "import Grasshopper.Kernel as gh"
+  "numpy>=1.20"
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
