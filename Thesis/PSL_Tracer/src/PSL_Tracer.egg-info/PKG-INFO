@@ -1,7 +1,7 @@
 Metadata-Version: 2.4
 Name: PSL_Tracer
-Version: 0.1.0
-Summary: Custom PSL tracer for Grasshopper
+Version: 0.1.2
+Summary: Custom PSL Tracers for Grasshopper
 Author-email: Niclas Brandt <niclasbrandt97@gmail.com>
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
