@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PSL_Tracer"
-version = "0.1.2"
+version = "0.1.4"
 description = "Custom PSL Tracers for Grasshopper"
 readme = "README.md"
 license = { file = "LICENSE" }
