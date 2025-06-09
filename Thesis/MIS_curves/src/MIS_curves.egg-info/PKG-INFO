@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: MIS_curves
-Version: 0.1.1
+Version: 0.1.2
 Summary: Removes too close curves in Rhino/GH using a graph approach
 Author-email: Niclas Brandt <niclasbrandt97@gmail.com>
 Classifier: Programming Language :: Python :: 3
