@@ -1,4 +1,4 @@
-def main(points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, offset_eps):
+def main(points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, offset_eps,neighbors, cluster_threshold, seed_amplitude):
 
     # -- Prerequisites ------------------------------------------------------------
     import math
@@ -328,3 +328,91 @@ def main(points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, offset_eps)
             reps_idxs.append(indices[sel])
 
         return reps_pts, reps_types, reps_fields, reps_dirs, reps_idxs
+
+
+
+
+    # 1) Run script
+    pts2d, typs, fl, dl, idxs = find_degenerate_points(
+        points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, offset_eps
+    )
+
+
+
+    # 2) cluster degenerate points
+    reps_pts, reps_typs, reps_fl, reps_dl, reps_idx = cluster_representatives(
+        pts2d, typs, fl, dl, idxs, cluster_threshold
+    )
+
+
+    # 3) Sort out vectors for mean degenerate point
+
+    field1_vecs = [
+        [rg.Vector3d(dx, dy, 0) for lbl, (dx, dy) in zip(fl_sub, dl_sub) if lbl == '1']
+        for fl_sub, dl_sub in zip(reps_fl, reps_dl)
+    ]
+    field2_vecs = [
+        [rg.Vector3d(dx, dy, 0) for lbl, (dx, dy) in zip(fl_sub, dl_sub) if lbl == '2']
+        for fl_sub, dl_sub in zip(reps_fl, reps_dl)
+    ]
+
+
+
+    # 3) Set seed amplitude
+    seed_points_field_1 = []
+    for base_pt, vec_list in zip(reps_pts, field1_vecs):
+        sub_list_1 = []
+        for vec in vec_list:
+            if isinstance(base_pt, rg.Point2d):
+                base_pt = rg.Point3d(base_pt.X, base_pt.Y, 0)
+            # convert tuple→Vector3d if needed
+            if isinstance(vec, tuple):
+                v = rg.Vector3d(vec[0], vec[1], 0)
+            else:
+                v = vec
+            # normalize & scale
+            if v.Length > 1e-9:
+                v.Unitize()
+                v *= seed_amplitude
+            # build line
+
+            sub_list_1.append(base_pt + v)
+        seed_points_field_1.append(sub_list_1)
+    print(seed_points_field_1)
+
+
+    seed_points_field_2 = []
+    for base_pt, vec_list in zip(reps_pts, field2_vecs):
+        sub_list_2 = []
+        for vec in vec_list:
+            if isinstance(base_pt, rg.Point2d):
+                base_pt = rg.Point3d(base_pt.X, base_pt.Y, 0)
+            # convert tuple→Vector3d if needed
+            if isinstance(vec, tuple):
+                v = rg.Vector3d(vec[0], vec[1], 0)
+            else:
+                v = vec
+            # normalize & scale
+            if v.Length > 1e-9:
+                v.Unitize()
+                v *= seed_amplitude
+            # build line
+
+            sub_list_2.append(base_pt + v)
+        seed_points_field_2.append(sub_list_2)
+    print(seed_points_field_2)
+
+
+
+
+    # 3) Output to Grasshopper trees:
+    singularities = reps_pts                                # final degenerate points 
+    field_1 = tr.list_to_tree(field1_vecs)                  # direction vectors for field 1
+    field_2 = tr.list_to_tree(field2_vecs)                  # direction vectord for field 2
+    new_seeds_1 = tr.list_to_tree(seed_points_field_1)      # Seeds for field 1
+    new_seeds_2 = tr.list_to_tree(seed_points_field_2)      # Seeds for field 2
+    dege_index = reps_idx                                   # Delmarcelle index
+    dege_type = tr.list_to_tree(reps_typs)                  # Degenerate type
+
+    
+    return singularities, field_1, field_2, new_seeds_1, new_seeds_2, dege_index, dege_type

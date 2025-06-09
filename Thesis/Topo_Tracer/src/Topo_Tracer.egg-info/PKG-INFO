@@ -1,0 +1,32 @@
+Metadata-Version: 2.4
+Name: Topo_Tracer
+Version: 0.1.3
+Summary: Package to extract and trace the topological skeleton of a 2-order stress tensor field
+Author-email: Niclas Brandt <niclasbrandt97@gmail.com>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: requests>=2.0
+Requires-Dist: numpy>=1.20
+Dynamic: license-file
+
+# PSL Tracer package
+This package includes 2 python functions that together are able to extract the topological skeleton of the stress tensor field in the rhino environment. 
+
+## Topo_Tracer_1
+This function locates degenerate points and calculates the separating direction for each of them.
+
+
+## Topo_Tracer_1
+This function takes the calculated separating directions and traces the separatrices.
+
+
+
+
+
+
+
+For any questions feel free to contact me!
