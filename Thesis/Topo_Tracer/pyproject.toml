@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Topo_Tracer"
-version = "0.1.3"
+version = "0.1.10"
 description = "Package to extract and trace the topological skeleton of a 2-order stress tensor field"
 readme = "README.md"
 license = { file = "LICENSE" }

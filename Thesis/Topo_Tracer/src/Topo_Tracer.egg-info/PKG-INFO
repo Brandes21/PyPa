@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: Topo_Tracer
-Version: 0.1.3
+Version: 0.1.10
 Summary: Package to extract and trace the topological skeleton of a 2-order stress tensor field
 Author-email: Niclas Brandt <niclasbrandt97@gmail.com>
 Classifier: Programming Language :: Python :: 3
