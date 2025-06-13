@@ -1,6 +1,7 @@
 def main(curve_ids, min_dist, forced_keep_curves):
     import Rhino
     import Grasshopper.Kernel as gh
+    from ghpythonlib import treehelpers as tr
 
 
     # === GHPython Run ===
@@ -131,9 +132,12 @@ def main(curve_ids, min_dist, forced_keep_curves):
         return kept, removed
 
 
-    test = 33
+  
     #Output#
     kept, removed = remove_curves_too_close(curve_ids, min_dist, forced_keep_curves)
-    return kept, removed, test
+
+    kept = tr.list_to_tree(kept)
+    removed = tr.list_to_tree(removed)
+    return kept, removed
 
 

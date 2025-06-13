@@ -4,17 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "MIS_curves"
-version = "0.1.2"
-description = "Removes too close curves in Rhino/GH using a graph approach"
+version = "0.1.4"
+description = "Removal of too close curves in the GH/Rhino environment"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
   { name = "Niclas Brandt", email = "niclasbrandt97@gmail.com" },
 ]
-dependencies = [
-  "requests>=2.0",          # example dependencies
-  "numpy>=1.20"
-]
+
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
