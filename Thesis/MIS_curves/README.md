@@ -17,7 +17,7 @@ The python package takes at most three inputs:
 The python package can just be called inside of a python3 grasshopper component. 
 
 ## Example files
-A GH example file can be found on: 
+A GH example file can be found on: https://github.com/Brandes21/PyPa/tree/main/Example_files 
 
 
 

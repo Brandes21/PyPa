@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: MIS_curves
-Version: 0.1.3
+Version: 0.1.4
 Summary: Removal of too close curves in the GH/Rhino environment
 Author-email: Niclas Brandt <niclasbrandt97@gmail.com>
 Classifier: Programming Language :: Python :: 3
@@ -9,7 +9,6 @@ Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
-Requires-Dist: None
 Dynamic: license-file
 
 # Introduction
@@ -31,7 +30,7 @@ The python package takes at most three inputs:
 The python package can just be called inside of a python3 grasshopper component. 
 
 ## Example files
-A GH example file can be found on: 
+A GH example file can be found on: https://github.com/Brandes21/PyPa/tree/main/Example_files 
 
 
 
