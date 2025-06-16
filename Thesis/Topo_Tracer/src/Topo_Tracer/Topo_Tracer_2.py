@@ -1,5 +1,5 @@
 def main(points, principal_vectors, seed_points, seed_vectors, boundary_curves, domain_surface,
-    k, num_steps, step_sign,boundary_tolerance,collision_threshold, n_back, seed_dist):
+    k, h, num_steps, step_sign,boundary_tolerance,collision_threshold, n_back, seed_dist):
     """
     Wraps full PSL tracing workflow into one function.
     Inputs:
@@ -62,10 +62,7 @@ def main(points, principal_vectors, seed_points, seed_vectors, boundary_curves, 
         return [wsum[i]/nm if nm>1e-12 else 0 for i in range(3)]
 
     def adjust_step_size_3d(pt, nbrs, pts3, sign):
-        if not nbrs: return 0.1*sign
-        ds=[math.dist(pt,pts3[i]) for i in nbrs]
-        avg=sum(ds)/len(ds)
-        return min(0.1,avg/2.0)*sign
+        return h*sign
 
     def project_onto_surface(surface, pt3d):
         P=rg.Point3d(*pt3d)
