@@ -19,7 +19,7 @@ The python package can just be called inside of a python3 grasshopper component.
 ## Example files
 A GH example file can be found on: https://github.com/Brandes21/PyPa/tree/main/Example_files 
 
-
+Package installation with pip: https://pypi.org/project/MIS-curves/
 
 For any questions or in case of bugs feel free to contact me on: niclasbrandt97@gmail.com
 

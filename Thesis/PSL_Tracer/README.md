@@ -101,7 +101,7 @@ Outputs:
 ## Example files
 A GH example file can be found on: https://github.com/Brandes21/PyPa/tree/main/Example_files 
 
-
+Package installation with pip: https://pypi.org/project/PSL-Tracer/
 
 For any questions or in case of bugs feel free to contact me on: niclasbrandt97@gmail.com
 
