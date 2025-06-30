@@ -19,18 +19,18 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         kdtree,
         tol=0.15
     ):
-        """
-        1) Offsets from (x0,y0) by eps in direction (1, slope).
-        2) Gets local p1, p2 from nearest non-degenerate neighbor.
-        3) Computes the *unoriented* angles angle1, angle2 of (1,slope)
-        vs. p1 and p2, respectively.
+        
+        # 1) Offsets from (x0,y0) by eps in direction (1, slope).
+        # 2) Gets local p1, p2 from nearest non-degenerate neighbor.
+        # 3) Computes the *unoriented* angles angle1, angle2 of (1,slope)
+        # vs. p1 and p2, respectively.
 
-        Returns (label, angle1, angle2):
-        label: '1' if angle1 <= angle2, '2' otherwise
-        angle1, angle2: the actual angles in [0, π/2].
+        # Returns (label, angle1, angle2):
+        # label: '1' if angle1 <= angle2, '2' otherwise
+        # angle1, angle2: the actual angles in [0, π/2].
 
-        If something fails (degenerate region, zero dir, etc.), returns (None, None, None).
-        """
+        # If something fails (degenerate region, zero dir, etc.), returns (None, None, None).
+        
         dir_vec = np.array([1.0, slope], dtype=float)
         norm = np.linalg.norm(dir_vec)
         if norm < 1e-14:
@@ -93,13 +93,13 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         offset_eps=0.02,
         deg_tol=0.01
     ):
-        """
-        1) Sample n_samples directions around the circle.
-        2) For each, measure unoriented angles to both fields.
-        3) Collect candidates in two groups (label '1' or '2').
-        4) Sort each by fit angle and keep best four.
-        Returns p1_vecs, p2_vecs, p1_candidates.
-        """
+        
+        # 1) Sample n_samples directions around the circle.
+        # 2) For each, measure unoriented angles to both fields.
+        # 3) Collect candidates in two groups (label '1' or '2').
+        # 4) Sort each by fit angle and keep best four.
+        # Returns p1_vecs, p2_vecs, p1_candidates.
+        
         angles = np.linspace(0, 2*np.pi, n_samples, endpoint=False)
         p1_candidates, p2_candidates = [], []
 
@@ -119,7 +119,7 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
             fit = angle1 if label=='1' else angle2
             (p1_candidates if label=='1' else p2_candidates).append((vec, fit))
 
-        # keep best 4 of each
+        # keep best n_sep_merged of each
         p1_candidates.sort(key=lambda x: x[1]); p2_candidates.sort(key=lambda x: x[1])
         p1_vecs = [v for v,_ in p1_candidates[:n_sep_merged]]
         p2_vecs = [v for v,_ in p2_candidates[:n_sep_merged]]
@@ -136,10 +136,10 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         c: float,
         d: float,
         imag_tol: float = 1e-7) -> List[float]:
-        """
-        Solve cubic: d x^3 + (c+2b) x^2 + (2a-d) x - c = 0
-        Return all real roots (slope values).
-        """
+        
+        # Solve cubic: d x^3 + (c+2b) x^2 + (2a-d) x - c = 0
+        # Return all real roots (slope values).
+        
         coeffs = [d, c + 2*b, 2*a - d, -c]
         roots = np.roots(coeffs)
         return [r.real for r in roots if abs(r.imag) < imag_tol]
@@ -161,21 +161,21 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         n_samples: int = 50,
         which_field: str = 'major'
     ) -> str:
-        """
-        Compute delta = a*d - b*c and Delmarcelle index, then choose the index-based
-        classification if it differs from delta-based.
+        
+        # Compute delta = a*d - b*c and Delmarcelle index, then choose the index-based
+        # classification if it differs from delta-based.
 
-        Delta-based:
-        delta>tol  -> 'wedge'
-        delta<-tol -> 'trisector'
-        else       -> 'merged'
+        # Delta-based:
+        # delta>tol  -> 'wedge'
+        # delta<-tol -> 'trisector'
+        # else       -> 'merged'
 
-        Index-based (from compute_index_delmarcelle):
-        index ≈ +0.5 -> 'wedge'
-        index ≈ -0.5 -> 'trisector'
-        index ≈ -1.0 -> 'saddle'
-        else         -> 'merged'
-        """
+        # Index-based (from compute_index_delmarcelle):
+        # index ≈ +0.5 -> 'wedge'
+        # index ≈ -0.5 -> 'trisector'
+        # index ≈ -1.0 -> 'saddle'
+        # else         -> 'merged'
+        
         # delta classification
         delta = a*d - b*c
         if delta > 1e-15:
@@ -185,7 +185,7 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         else:
             delta_class = 'merged'
 
-        # index classification always computed
+        # index classification
         idx_value, _ = compute_index_delmarcelle(
             x0, y0, points, tensors, kdtree,
             radius, n_samples, which_field
@@ -215,12 +215,12 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         tensors: List[np.ndarray],
         kdtree: KDTree,
         neighbors) -> Optional[Tuple[float, float, float, float]]:
-        """
-        Fit local plane to f=T11-T22 and g=T12 via least squares over nearest neighbors.
-        For idx_center, take up to `neighbors` nearest points (excluding center).
-        Returns (a, b, c, d) where:
-        a=0.5*df/dx, b=0.5*df/dy, c=dg/dx, d=dg/dy.
-        """
+        
+        # Fit local plane to f=T11-T22 and g=T12 via least squares over nearest neighbors.
+        # For idx_center, take up to `neighbors` nearest points (excluding center).
+        # Returns (a, b, c, d) where:
+        # a=0.5*df/dx, b=0.5*df/dy, c=dg/dx, d=dg/dy.
+        
         # center coordinates
         x0, y0 = points[center_idx].X, points[center_idx].Y
         #print(x0)
@@ -269,9 +269,9 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         sigma1_vals: List[float],
         sigma2_vals: List[float],
         tol: float = 1e-2) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
-        """
-        Find nearest non-degenerate point, return its eigenvectors (p1,p2) sorted by eigenvalue descending.
-        """
+        
+        # Find nearest non-degenerate point, return its eigenvectors (p1,p2) sorted by eigenvalue descending.
+        
         dists, idxs = kdtree.query((x, y), k=5)
         for dist, idx in zip(np.atleast_1d(dists), np.atleast_1d(idxs)):
             if abs(sigma1_vals[idx] - sigma2_vals[idx]) > tol:
@@ -293,10 +293,7 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         sigma1_vals: List[float],
         sigma2_vals: List[float],
         tol: float = 1e-2) -> Optional[str]:
-        """
-        Offset from (x0,y0) by eps along slope, get local eigenvectors,
-        return '1' if closer to major, else '2'.
-        """
+    
         vec = np.array([1.0, slope])
         vec /= np.linalg.norm(vec)
         x_eps, y_eps = x0 + eps*vec[0], y0 + eps*vec[1]
@@ -317,10 +314,10 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         radius: float,
         n_samples: int = 50,
         which_field: str = 'major') -> Tuple[float, List[Tuple[float,float]]]:
-        """
-        Sample the chosen eigenvector field around a circle and compute its net rotation index.
-        Returns (index_value, circle_samples).
-        """
+        
+        # Sample the chosen eigenvector field around a circle and compute its net rotation index.
+        # Returns (index_value, circle_samples).
+        
         thetas = np.linspace(0, 2*np.pi, n_samples, endpoint=False)
         alpha = np.zeros(n_samples)
         pts_circle: List[Tuple[float,float]] = []
@@ -379,10 +376,10 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         list[list[tuple[float,float]]],
         list[float]
     ]:
-        """
-        Detect degeneracies, classify, extract separatrices, and compute index.
-        Returns pts2d, types, field_labels, directions, indices
-        """
+        
+        # Detect degeneracies, classify, extract separatrices, and compute index.
+        # Returns pts2d, types, field_labels, directions, indices
+        
         assert len(points)==len(sigma1_vals)==len(sigma2_vals)==len(p1_dirs)==len(p2_dirs)
         # build tensors and tree
         tensors = [stress_tensor_2d(s1,p1,s2,p2)
@@ -457,10 +454,10 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
         indices: List[float],
         threshold: float) -> Tuple[
         List[rg.Point2d], List[str], List[List[str]], List[List[Tuple[float,float]]], List[float]]:
-        """
-        Group degenerate points within `threshold` distance, then for each cluster
-        pick the point closest to the cluster mean as representative.
-        """
+        
+        # Group degenerate points within `threshold` distance, then for each cluster
+        # pick the point closest to the cluster mean as representative.
+        
         coords = np.array([(p.X,p.Y) for p in pts2d])
         kdtree = KDTree(coords)
         visited = set()
@@ -568,10 +565,10 @@ def main(surface, points, sigma1_list, p1_list, sigma2_list, p2_list,tol_deg, of
 
 
     def project_onto_surface(surface, pt3d):
-            """
-            Projects a point vertically onto a Brep or Surface using Grasshopper's Project component.
-            Assumes a vertical direction of +Z.
-            """
+            
+            # Projects a point vertically onto a Brep or Surface using Grasshopper's Project component.
+            # Assumes a vertical direction of +Z.
+            
             # convert inputs
             gh_pt = rg.Point3d(pt3d[0], pt3d[1], pt3d[2])
             direction = rg.Vector3d(0, 0, 1)

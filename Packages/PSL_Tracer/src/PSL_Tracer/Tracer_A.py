@@ -38,23 +38,21 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2)
 
     def to_xyz(pt_or_vec):
-        """Converts Rhino.Geometry.Point3d or Vector3d (or numeric [x,y,z]) to a Python list [x, y, z]."""
+        #Converts Rhino.Geometry.Point3d or Vector3d (or numeric [x,y,z]) to a Python list [x, y, z]
         if hasattr(pt_or_vec, "X"):
             return [pt_or_vec.X, pt_or_vec.Y, pt_or_vec.Z]
         else:
             return [pt_or_vec[0], pt_or_vec[1], pt_or_vec[2]]
 
     def normalize_3d(vec):
-        """Normalize a 3D vector [x, y, z] to unit length. Returns [0,0,0] if near zero length."""
+        #Normalize a 3D vector [x, y, z] to unit length. Returns [0,0,0] if near zero length
         mag = math.sqrt(vec[0]**2 + vec[1]**2 + vec[2]**2)
         if mag < 1e-12:
             return [0.0, 0.0, 0.0]
         return [vec[0]/mag, vec[1]/mag, vec[2]/mag]
 
     def find_closest_neighbors_kd_3d(point, kd_tree, k):
-        """
-        Given a 3D point [x, y, z] and a KDTree, returns a list of indices of the k closest points.
-        """
+ 
         distances, indices = kd_tree.query(point, k=k)
         if isinstance(indices, int):
             return [indices]
@@ -124,11 +122,11 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         kd_tree, 
         boundary_curves=None, 
         boundary_tolerance=boundary_tolerance,prev_dir=None):
-        """
-        Perform one RK4 step in 3D. Stop if next point is within 'boundary_tolerance'
-        of any boundary curve (edges).
-        Returns the next 3D point or None if out-of-bound / near boundary.
-        """
+        
+        # Perform one RK4 step in 3D. Stop if next point is within 'boundary_tolerance'
+        # of any boundary curve (edges).
+        # Returns the next 3D point or None if out-of-bound / near boundary.
+        
         
         # 1) Neighbors & dynamic step size
         neighbors = find_closest_neighbors_kd_3d(current_point, kd_tree, k)
@@ -182,7 +180,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
             if projected is None:
                 # Means we're off domain or near an open edge you consider invalid
                 return None
-            next_point = projected  # accept the projected coordinate
+            next_point = projected  
 
 
         # Otherwise return the next valid point
@@ -226,9 +224,9 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
             return None
 
     def is_on_surface(surface, pt3d, tol=0.01):
-        """
-        Returns True if pt3d is within 'tol' of the surface. 
-        """
+        
+        
+
         if not surface: 
             return True  # no surface provided
         pproj = project_onto_surface(surface, pt3d)
@@ -253,9 +251,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         return rg.PolylineCurve(poly)
 
     def closest_point_on_polyline_3d(pt3d, poly_curve):
-        """
-        Return (closest_point, distance) from a 3D point to a polyline curve.
-        """
+  
         test_pt = rg.Point3d(pt3d[0], pt3d[1], pt3d[2])
         rc, t = poly_curve.ClosestPoint(test_pt)
         if rc:
@@ -266,10 +262,10 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
             return None, float('inf')
 
     def find_closest_existing_line_3d(next_point, existing_trajectories, threshold):
-        """
-        Among all previously traced lines (in 3D), find if 'next_point' is within 'threshold' of any line.
-        Returns (closest_line_index, closest_point_on_line, distance).
-        """
+        
+        # Among all previously traced lines (in 3D), find if 'next_point' is within 'threshold' of any line.
+        # Returns (closest_line_index, closest_point_on_line, distance).
+        
         min_dist = float('inf')
         closest_line_idx = None
         closest_pt = None
@@ -288,12 +284,12 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
 
     def is_point_close_to_any(point_list, single_point, threshold):
         flat = [item for sublist in point_list for item in sublist]
-        #print(f"single = {single_point}")
+
         single_point_1 = rg.Point3d(single_point[0],single_point[1],single_point[2])
         
         
         for pt in flat:
-            #print(f"pt = {pt}")
+ 
             if single_point_1.DistanceTo(pt) <= threshold:
                 return pt
         return single_point
@@ -326,9 +322,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         step_np /= step_len
         
         # 1) Quickly find the 'k' closest boundary samples to current_pt
-        #    using the KD-tree:
-        #    If k=1, you'll get a single distance & index as floats
-        #    If k>1, arrays
+
         distances, indices = boundary_kdtree.query(cur_np, k=k)
 
         # If k=1, make them arrays for consistency
@@ -342,10 +336,9 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         best_pt = None
         min_dist = float('inf')
 
-        # boundary_points is Nx3
 
         for dist, idx in zip(distances, indices):
-            cand_np = boundary_points_array[idx]  # shape (3,)
+            cand_np = boundary_points_array[idx]  
             dir_vec = cand_np - cur_np
             dir_len = np.linalg.norm(dir_vec)
             if dir_len < 1e-12:
@@ -353,13 +346,11 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
             dir_unit = dir_vec / dir_len
             dot_val = np.dot(dir_unit, step_np)
             
-            # Suppose you want the direction that is "most parallel but reversed"
-            # => you'd pick the smallest dot_val. If you want "most parallel, same direction,"
-            # => you'd pick largest dot_val. 
+
             if dot_val < best_dot:
                 best_dot = dot_val
                 best_pt = cand_np
-                # optional: track the boundary distance as well
+                
                 if dist < min_dist:
                     min_dist = dist
 
@@ -389,11 +380,11 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         collision_threshold=collision_threshold,
         closing_threshold=closing_threshold,
         existing_merge_pts = None):
-        """
-        Traces a PSL forward (+1) and backward (-1) in ONE loop, letting each direction
-        stop or collide independently. If forward is done, backward can keep going (and vice versa).
-        If both are done, or tips meet, we stop entirely.
-        """
+        
+        # Traces a PSL forward (+1) and backward (-1) in ONE loop, letting each direction
+        # stop or collide independently. If forward is done, backward can keep going (and vice versa).
+        # If both are done, or tips meet, we stop entirely.
+        
         if existing_trajectories is None:
             existing_trajectories = []
         
@@ -413,7 +404,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
         bridging_lines = []
         merge_points = []
 
-        # NEW: Flags for forward/backward
+        #Flags for forward/backward
         forward_active = True
         backward_active = True
 
@@ -442,7 +433,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
                     # Accept the new point
                     f_next_pt, f_next_dir = f_next
                     
-                    # Optional collision check
+                    #collision check
                     if existing_trajectories:
                         line_idx, close_pt, dist_cl = find_closest_existing_line_3d(
                             f_next_pt, existing_trajectories, collision_threshold
@@ -475,13 +466,13 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
                             print(f"PSL forward collided with line {line_idx} at dist {dist_cl:.3f}.")
                             forward_active = False
 
-                        # 2) Check distance to boundary edges, if we have them
+                        # 2) Check distance to boundary edges
 
                     if boundary_curves:
                         dir_vec = [-1*x for x in f_next_dir]
                         cp,dist_to_edge = find_most_parallel_boundary_point(f_next_pt,dir_vec,boundary_curves,k_edge)
                         if dist_to_edge < boundary_tolerance:
-                            # We consider that "off" or "too close" => stop
+                            # "off" or "too close" => stop
                             print(f"PSL forward reached boundary.")
                             forward_active = False
                             bridging_line = rg.Line(
@@ -490,7 +481,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
                             )
                             bridging_lines.append(bridging_line)
                             
-                    # If still active after collision checks, append the step
+                    # append the step
                     if forward_active:
                         forward_line.append(rg.Point3d(*f_next_pt))
                         f_current_pt = f_next_pt
@@ -556,7 +547,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
                     if boundary_curves:
                         cp,dist_to_edge = find_most_parallel_boundary_point(b_next_pt,b_next_dir,boundary_curves,k_edge)
                         if dist_to_edge < boundary_tolerance:
-                            # We consider that "off" or "too close" => stop
+                            #"off" or "too close" => stop
                             print(f"PSL forward reached boundary.")
                             backward_active = False
                             bridging_line = rg.Line(
@@ -583,7 +574,6 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
 
             # --------------------------------------------------
             # TIP DISTANCE CHECK
-            # (only if both are active, or up to you)
             # --------------------------------------------------
             if forward_active and backward_active and step_i >= 10:
                 f_tip = [forward_line[-1].X, forward_line[-1].Y, forward_line[-1].Z]
@@ -594,7 +584,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
                     (f_tip[2] - b_tip[2])**2
                 )
                 if dist_fb < closing_threshold:
-                    # bridging line if you like
+                    # bridging line 
                     bridging_line = [forward_line[-1], backward_line[-1]]
                     bridging_lines.append(bridging_line)
 
@@ -615,15 +605,9 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
 
 
     # ------------------------------------------------------------------------
-    # "MAIN" LOGIC IN GRASSHOPPER
-    # ------------------------------------------------------------------------
-    # Below is just an example of how you'd use these functions in GH:
-    #   1) Build the 3D KDTree from your data.
-    #   2) Loop over seed points.
-    #   3) Keep a global 'existing_trajectories' for collisions.
+    # "MAIN" LOGIC
     # ------------------------------------------------------------------------
 
-    # Example usage in a GH Python component:
 
     # 1) Convert your input points/vectors to lists of [x,y,z].
     points_array_3d = [to_xyz(pt) for pt in points]
@@ -657,7 +641,7 @@ def main(h,num_steps,k,collision_threshold,merge_radius,n_back,sample_count,k_ed
     kd_tree = KDTree(points_np)
     #print(f"old_kdTree = {kd_tree}")
 
-    # 3) We'll store PSL results in 'existing_trajectories' as: ( [pt3d_list], polyline_curve )
+    # 3) 'existing_trajectories' as: ( [pt3d_list], polyline_curve )
     existing_trajectories = []
     bridging_lines_out = []
     existing_merge_pts = []

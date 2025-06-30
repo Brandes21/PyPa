@@ -193,7 +193,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
             projected = project_onto_surface(domain_surface, next_point)
             #print(projected)
             if projected is None:
-                # Means we're off domain or near an open edge you consider invalid
+                
                 return None
             next_point = projected  # accept the projected coordinate
 
@@ -208,7 +208,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         weighted_vec = [0.0, 0.0, 0.0]
 
         for i in neighbors:
-            vx, vy, vz = vectors[i]  # copy so we can flip locally
+            vx, vy, vz = vectors[i]  # copy can flip locally
             if ref_dir is not None:
                 dotp = vx*ref_dir[0] + vy*ref_dir[1] + vz*ref_dir[2]
                 if dotp < 0:
@@ -298,7 +298,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
             return None, float('inf')
         step_np /= step_len
         
-        # 1) Quickly find the 'k' closest boundary samples to current_pt
+        # 1)  'k' closest boundary samples to current_pt
   
         distances, indices = boundary_kdtree.query(cur_np, k=k)
 
@@ -323,7 +323,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
             dir_unit = dir_vec / dir_len
             dot_val = np.dot(dir_unit, step_np)
             
-            # most parallel, same direction => pick largest dot_val. 
+            # most parallel, same direction pick largest dot_val. 
             if dot_val < best_dot:
                 best_dot = dot_val
                 best_pt = cand_np
@@ -360,7 +360,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
             if not rc:
                 return None
             
-            # If it's a face, we evaluate the face normal at (u, v)
+            # If it's a face evaluate the face normal at (u, v)
             if comp_index.ComponentIndexType == rg.ComponentIndexType.BrepFace:
                 face_id = comp_index.Index
                 face = surface.Faces[face_id]
@@ -385,17 +385,17 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         return None
 
     def offset_seed(psl_pts_3d, index, offset_distance, surface):
-        """
-        Offsets the PSL at psl_pts_3d[index] in the local tangent plane of 'surface'.
-        Steps:
-        1) Compute PSL tangent at index
-        2) Get surface normal at that point
-        3) binormal = cross(surface_normal, psl_tangent)
-        4) candidate1 = point + offset_distance*binormal
-            candidate2 = point - offset_distance*binormal
-        5) (optional) project candidates back onto the surface
-        Returns: (candidate1, candidate2) as [x, y, z], or (None, None) on error.
-        """
+        
+        # Offsets the PSL at psl_pts_3d[index] in the local tangent plane of 'surface'.
+        # Steps:
+        # 1) Compute PSL tangent at index
+        # 2) Get surface normal at that point
+        # 3) binormal = cross(surface_normal, psl_tangent)
+        # 4) candidate1 = point + offset_distance*binormal
+        #     candidate2 = point - offset_distance*binormal
+        # 5) (optional) project candidates back onto the surface
+        # Returns: (candidate1, candidate2) as [x, y, z], or (None, None) on error.
+        
         n = len(psl_pts_3d)
         if n < 2:
             return None, None
@@ -446,8 +446,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         nz /= n_len
         
         # 3) BINORMAL = cross(normal, tangent)
-        # This is guaranteed to be in the tangent plane if PSL is truly tangent to the surface
-        # If the PSL isn't exactly tangent, you'll get some tilt. 
+
         bx = ny*tz - nz*ty
         by = nz*tx - nx*tz
         bz = nx*ty - ny*tx
@@ -469,18 +468,18 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         
         
         candidate1_proj = project_onto_surface(surface, candidate1)
-        #print(f"this point is seed {candidate1_proj}")
+ 
         candidate2_proj = project_onto_surface(surface, candidate2)
 
 
         return candidate1_proj, candidate2_proj
 
     def sample_psl_3d(psl_pts, sample_interval):
-        """
-        Given a PSL (list of Rhino Point3d or numeric [x,y,z] points),
-        sample it every 'sample_interval' points.
-        Returns a list of tuples: ( [x,y,z], original_index )
-        """
+        
+        # Given a PSL (list of Rhino Point3d or numeric [x,y,z] points),
+        # sample it every 'sample_interval' points.
+        # Returns a list of tuples: ( [x,y,z], original_index )
+        
         samples = []
         for i in range(0, len(psl_pts), sample_interval):
             pt3d = psl_pts[i]
@@ -492,12 +491,12 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         return samples
 
     def is_valid_seed(candidate, existing_trajectories, min_distance, boundary_curves):
-        """
-        Check if candidate seed is valid:
-        - It is not too close to any existing PSL (using min_distance).
-        - It is not too close to any boundary curves (if boundary_curves is provided and
-            candidate's distance < boundary_tolerance).
-        """
+        
+        # Check if candidate seed is valid:
+        # - It is not too close to any existing PSL (using min_distance).
+        # - It is not too close to any boundary curves (if boundary_curves is provided and
+        #     candidate's distance < boundary_tolerance).
+        
         # Check candidate against existing PSLs
         idx, cp, dist = find_closest_existing_line_3d(candidate, existing_trajectories, min_distance)
         if idx is not None:
@@ -512,12 +511,12 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         return True
 
     def get_stress_value(sample_pt, kd_tree, stress_values):
-        """
-        Query the stress_kdtree to find the nearest stress sample.
-        Return the corresponding stress value from stress_values.
-        """
+        
+        # Query the stress_kdtree to find the nearest stress sample.
+        # Return the corresponding stress value from stress_values.
+        
         # sample_pt is [x, y] in 2D
-        dist, idx = kd_tree.query(sample_pt)  # single neighbor
+        dist, idx = kd_tree.query(sample_pt)  
         # stress_values[idx] is the stress at the nearest stress point
         return stress_values[idx]
 
@@ -554,11 +553,11 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         closing_threshold=closing_threshold, 
         kd_tree=None,
         existing_merge_pts = None):
-        """
-        Single-loop approach where forward/backward can stop independently.
-        If forward hits a collision/boundary, it stops, but backward can continue, and vice versa.
-        We only stop the entire PSL when BOTH directions are inactive, or when tips meet.
-        """
+        
+        # Single-loop approach where forward/backward can stop independently.
+        # If forward hits a collision/boundary, it stops, but backward can continue, and vice versa.
+        # We only stop the entire PSL when BOTH directions are inactive, or when tips meet.
+        
         if existing_trajectories is None:
             existing_trajectories = []
         
@@ -567,7 +566,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         edge_lines = []
         merge_points = []
 
-        # We'll keep two lines: forward and backward
+        # forward and backward
         forward_line = [rg.Point3d(*seed_point_3d)]
         backward_line = [rg.Point3d(*seed_point_3d)]
         
@@ -577,7 +576,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         b_current_pt = list(seed_point_3d)
         b_current_dir = None
 
-        # NEW: Boolean flags to track if forward/backward are still active
+        # Boolean flags 
         forward_active = True
         backward_active = True
 
@@ -615,7 +614,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
                             close_pt = is_point_close_to_any(existing_merge_pts, close_pt, snap_radius)
 
                         if line_idx is not None and close_pt is not None:
-                            # Instead of break, we do bridging & disable forward
+                            # Instead of break, bridging & disable forward
     
                             if len(forward_line) > n_back:
                                 bridging_line = rg.Line(
@@ -639,12 +638,12 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
                             print(f"PSL forward collided with line {line_idx} at dist {dist_cl:.3f}.")
                             forward_active = False
 
-                        # 2) Check distance to boundary edges, if we have them
+                        # 2) Check distance to boundary edges
                     if boundary_curves:
                         dir_vec = [-1*x for x in f_next_dir]
                         cp,dist_to_edge = find_most_parallel_boundary_point(f_next_pt,dir_vec,boundary_curves,10)
                         if dist_to_edge < boundary_tolerance:
-                            # We consider that "off" or "too close" => stop
+                            #"off" or "too close" => stop
                             print(f"PSL forward reached boundary.")
                             forward_active = False
                             bridging_line = rg.Line(
@@ -719,7 +718,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
                     if boundary_curves:
                         cp,dist_to_edge = find_most_parallel_boundary_point(b_next_pt,b_next_dir,boundary_curves,10)
                         if dist_to_edge < boundary_tolerance:
-                            # We consider that "off" or "too close" => stop
+                            #"off" or "too close" => stop
                             print(f"PSL forward reached boundary.")
                             backward_active = False
                             bridging_line = rg.Line(
@@ -784,22 +783,21 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         collision_threshold,
         sample_interval,
         min_seed_distance,
-        # NEW: for stress-based offset
         stress_values):
-        """
-        Generate PSLs using an iterative seeding strategy (3D version)
-        with a GLOBAL PRIORITY QUEUE for candidate seeds based on stress.
+        
+        # Generate PSLs using an iterative seeding strategy (3D version)
+        # with a GLOBAL PRIORITY QUEUE for candidate seeds based on stress.
 
-        1) Trace an initial PSL from initial_seed_3d.
-        2) Sample it, pushing candidate seeds into a priority queue (max stress first).
-        3) Pop the highest-stress seed, validate it, trace a PSL, sample it, push new seeds...
-        4) Stop when the priority queue is empty.
+        # 1) Trace an initial PSL from initial_seed_3d.
+        # 2) Sample it, pushing candidate seeds into a priority queue (max stress first).
+        # 3) Pop the highest-stress seed, validate it, trace a PSL, sample it, push new seeds...
+        # 4) Stop when the priority queue is empty.
 
-        Returns:
-        - all_psls: list of (psl_points_3d, polyline_curve_3d)
-        - bridging_lines: bridging segments
-        - positive_candidates: seeds that were actually used
-        """
+        # Returns:
+        # - all_psls: list of (psl_points_3d, polyline_curve_3d)
+        # - bridging_lines: bridging segments
+        # - positive_candidates: seeds that were actually used
+        
         existing_merge_pts = []
 
         # 1) Trace the initial PSL
@@ -833,7 +831,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
         if initial_edges:
             edges.extend(initial_edges)
 
-        # Helper: sample a PSL, push seeds to a global priority queue
+        # Helperfunction: sample a PSL, push seeds to a global priority queue
         def add_candidates_from_psl(psl_points, sample_interval):
             samples = sample_psl_3d(psl_points, sample_interval)  # => [ ([x,y,z], index), ... ]
             print(len(samples))
@@ -842,11 +840,11 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
             for (sample_pt_3d, orig_index) in samples:
                 # 1) Query stress
                 stress_val = get_stress_value(sample_pt_3d,kd_tree, stress_values)
-                # 2) Compute dynamic offset e.g. offset = bar_capacity / stress_val, clamped
+                # 2) Compute dynamic offset 
                 if stress_val < 1e-6:
                     continue
                 raw_offset = strength / stress_val
-                #print(raw_offset)
+                
                 
 
                 dyn_offset = min(raw_offset, max_offset_distance) 
@@ -956,7 +954,7 @@ def main(ghenv,h,num_steps,k,collision_threshold,snap_radius,n_back,max_offset_d
 
 
     # ----------------------------------------------------------------------
-    # CALL YOUR 3D PSL GENERATION FUNCTION
+    # CALL 3D PSL GENERATION FUNCTION
     # ----------------------------------------------------------------------
 
 

@@ -1,23 +1,23 @@
 def main(points, principal_vectors, seed_points, seed_vectors, boundary_curves, domain_surface,
     k, h, num_steps, step_sign,boundary_tolerance,collision_threshold, n_back, seed_dist):
-    """
-    Wraps full PSL tracing workflow into one function.
-    Inputs:
-      points             - list of Point3d or [x,y,z]
-      principal_vectors  - list of Vector3d or [x,y,z]
-      seed_points        - list of Point3d or [x,y,z]
-      seed_vectors       - list of Vector3d or [x,y,z]
-      k                  - neighbors for interpolation
-      num_steps          - max steps per seed
-      step_sign          - +1 or -1 integration direction
-      boundary_curves    - list of domain edge Curves
-      domain_surface     - Brep or Surface to derive edges if curves not provided
-      boundary_tolerance - stop if closer than this to boundary
-      collision_threshold- merge if within this of existing line
-    Outputs:
-      a - GH tree of (trajectory_pts, polylineCurve) per seed
-      b - GH tree of bridging segment curves
-    """
+    
+    
+    # Inputs:
+    #   points             - list of Point3d or [x,y,z]
+    #   principal_vectors  - list of Vector3d or [x,y,z]
+    #   seed_points        - list of Point3d or [x,y,z]
+    #   seed_vectors       - list of Vector3d or [x,y,z]
+    #   k                  - neighbors for interpolation
+    #   num_steps          - max steps per seed
+    #   step_sign          - +1 or -1 integration direction
+    #   boundary_curves    - list of domain edge Curves
+    #   domain_surface     - Brep or Surface to derive edges if curves not provided
+    #   boundary_tolerance - stop if closer than this to boundary
+    #   collision_threshold- merge if within this of existing line
+    # Outputs:
+    #   a - GH tree of (trajectory_pts, polylineCurve) per seed
+    #   b - GH tree of bridging segment curves
+    
 
     import math
     import rhinoscriptsyntax as rs
